@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ripple balance</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+  <div class="container">
+      <h3 class="text-muted">Ripple</h3>
+      <div class="jumbotron">
+        <p class="lead">输入ripple地址，如rp7LMLwHTs9F4NJwpXNGjdRhmvwppeBb92，查询XRP数量。</p>
+      </div>
+      <div class="row">
+    <form class="form-horizontal" role="form">
+       <div class="form-group">
+        <label for="rippleaddress" class="col-md-2 control-label">Ripple 地址：</label>
+        <div class="col-md-4">
+            <input  id="rippleaddress" type="text" class="form-control" placeholder="请输入您的ripple地址">
+       </div>
+        <div class="col-md-2">
+        <a href="javascript:getbalance()" type="submit" class="btn btn-primary">查询余额</a>
+        </div>
+        </div>
+    </form>
+    <div id="xrpCount"></div>
+    </div>
+    </div>
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function getbalance(){
+            $('#xrpCount').html('');
+            var rippleaddress = $('#rippleaddress').val();
+            if(!rippleaddress || rippleaddress === ''){
+              alert('请输入ripple地址');
+              return;
+            }
+            var balanceUrl = 'https://api.ripple.com/v1/accounts/' + rippleaddress + '/balances';
+            $.ajax({
+              type: 'GET',
+              url: balanceUrl,
+              dataType: 'json',
+              success: function(data){
+                if(data.success){
+                  for(var i=0; i<data.balances.length; i++){
+                    if(data.balances[i].currency === 'XRP'){
+                    $('#xrpCount').html('<p class="col-md-offset-2 lead">XRP：' + Math.floor(data.balances[i].value) + ' 个</p>');
+                    }
+                  }
+                  }else{
+                    alert('查询失败');
+                    return;
+                  }
+              },
+             error: function(err){
+              alert('请检查ripple地址是否正确');
+              return;
+            }
+            });
+        }
+    </script>
+  </body>
+</html>
